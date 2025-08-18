@@ -71,11 +71,18 @@ button {
   height: 60px;
   color: whitesmoke;
   cursor: pointer;
+  transition: all 0.1s;
 }
+
+
 
 button:disabled {
     filter:brightness(0.5);
     cursor: default
+}
+
+button:hover:not(:disabled) {
+    transform: scale(1.05);
 }
 
 button.func {
