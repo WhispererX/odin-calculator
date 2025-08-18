@@ -2,6 +2,8 @@
 
 :root {
   background-color: burlywood;
+
+  --btn-text-offset: 12px;
 }
 
 body {
@@ -74,15 +76,13 @@ button {
   transition: all 0.1s;
 }
 
-
-
 button:disabled {
-    filter:brightness(0.5);
-    cursor: default
+  filter: brightness(0.5);
+  cursor: default;
 }
 
 button:hover:not(:disabled) {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 button.func {
@@ -93,7 +93,7 @@ button.func {
 
 button.func:active:not(:disabled) {
   background-image: url('./assets/calc-func-key-pressed.png');
-  padding-top: 14px;
+  padding-top: var(--btn-text-offset);
 }
 
 button.num {
@@ -104,7 +104,7 @@ button.num {
 
 button.num:active:not(:disabled) {
   background-image: url('./assets/calc-num-key-pressed.png');
-  padding-top: 14px;
+  padding-top: var(--btn-text-offset);
 }
 
 button.eq {
@@ -115,5 +115,5 @@ button.eq {
 
 button.eq:active:not(:disabled) {
   background-image: url('./assets/calc-eq-key-pressed.png');
-  padding-top: 14px;
+  padding-top: var(--btn-text-offset);
 }
