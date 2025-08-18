@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Tiny5&display=swap');
+
+:root {
+  background-color: burlywood;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  height: 100vh;
+  width: 100vw;
+
+  font-family: "Tiny5", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 30px;
+}
+
+#calculator {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  padding: 20px;
+
+  background-image: url('./assets/calculator.png');
+  width: 400px;
+  height: 400px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#output {
+    background-image: url('./assets/calc-output.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+
+    min-height: 50px;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0px 20px;
+}
