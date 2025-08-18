@@ -16,7 +16,7 @@ body {
   height: 100vh;
   width: 100vw;
 
-  font-family: "Tiny5", sans-serif;
+  font-family: 'Tiny5', sans-serif;
   font-weight: 400;
   font-style: normal;
   font-size: 30px;
@@ -28,23 +28,85 @@ body {
   align-items: stretch;
 
   padding: 20px;
+  gap: 10px;
 
   background-image: url('./assets/calculator.png');
   width: 400px;
-  height: 400px;
+  height: 420px;
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
 #output {
-    background-image: url('./assets/calc-output.png');
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
+  background-image: url('./assets/calc-output.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 
-    min-height: 50px;
+  min-height: 50px;
 
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0px 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0px 20px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  font-size: 28px;
+
+  font-family: inherit;
+  background-color: transparent;
+  border: none;
+
+  padding-top: 10px;
+
+  width: 72px;
+  height: 60px;
+  color: whitesmoke;
+  cursor: pointer;
+}
+
+button:disabled {
+    filter:brightness(0.5);
+    cursor: default
+}
+
+button.func {
+  background-image: url('./assets/calc-func-key.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+button.func:active:not(:disabled) {
+  background-image: url('./assets/calc-func-key-pressed.png');
+  padding-top: 14px;
+}
+
+button.num {
+  background-image: url('./assets/calc-num-key.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+button.num:active:not(:disabled) {
+  background-image: url('./assets/calc-num-key-pressed.png');
+  padding-top: 14px;
+}
+
+button.eq {
+  background-image: url('./assets/calc-eq-key.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+button.eq:active:not(:disabled) {
+  background-image: url('./assets/calc-eq-key-pressed.png');
+  padding-top: 14px;
 }
