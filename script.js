@@ -75,8 +75,8 @@ class Calculator {
 /**============================================
  *               CONSTANTS & VARIABLES
  *=============================================**/
-const E = Math.floor(Math.E * 1000) / 1000;
-const PI = Math.floor(Math.PI * 1000) / 1000;
+const E = Math.floor(Math.E * 100) / 100;
+const PI = Math.floor(Math.PI * 100) / 100;
 
 let advancedMode = false; // Takes order of operations into consideration
 let justEvaluated = false; // Resets display on new input after evaluation in normal mode
@@ -227,34 +227,44 @@ function handleButtonAdvanced(button) {
   switch (buttonId) {
     case 'add':
       {
-        setDisplay(display.textContent + ' + ');
+        if (!display.classList.contains('error')) {
+          setDisplay(display.textContent + ' + ');
+        }
       }
       break;
 
     case 'subtract':
       {
-        setDisplay(display.textContent + ' - ');
+        if (!display.classList.contains('error')) {
+          setDisplay(display.textContent + ' - ');
+        }
       }
       break;
 
     case 'divide':
       {
-        setDisplay(display.textContent + ' / ');
+        if (!display.classList.contains('error')) {
+          setDisplay(display.textContent + ' / ');
+        }
       }
       break;
 
     case 'multiply':
       {
-        setDisplay(display.textContent + ' * ');
+        if (!display.classList.contains('error')) {
+          setDisplay(display.textContent + ' * ');
+        }
       }
       break;
 
     case 'mod':
       {
-        setDisplay(display.textContent + ' % ');
+        if (!display.classList.contains('error')) {
+          setDisplay(display.textContent + ' % ');
+        }
       }
       break;
-
+  
     case 'ce':
       {
         clearDisplay();
