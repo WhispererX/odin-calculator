@@ -15,12 +15,35 @@ let operator = null;
 const E = Math.floor(Math.E * 1000) / 1000;
 const PI = Math.floor(Math.PI * 1000) / 1000;
 
+let ADVANCED = false;
+
 let justEvaluated = false;
 
 let calculator = new Calculator();
 
 buttons.forEach((button) => {
-  button.addEventListener('click', (e) => handleButton(button));
+  if (button.id === 'setting-normal' || button.id === 'setting-advanced') {
+    button.addEventListener('click', (e) => {
+      $('#setting-normal').classList.remove('active');
+      $('#setting-advanced').classList.remove('active');
+
+      button.classList.add('active');
+
+      setAdvanced(button.id === 'setting-advanced');
+    });
+  } else {
+    button.addEventListener('click', (e) =>
+      ADVANCED ? handleInput(button) : handleButton(button)
+    );
+  }
+
+  if (ADVANCED) {
+    $('#key-lb').disabled = false;
+    $('#key-rb').disabled = false;
+    $('#key-root').disabled = true;
+    $('#key-fact').disabled = true;
+    $('#key-pow').disabled = true;
+  }
 });
 
 document.addEventListener('keydown', (e) => {
@@ -28,55 +51,119 @@ document.addEventListener('keydown', (e) => {
     case 'Delete':
     case 'Backspace':
       {
-        handleButton({ id: 'key-ce' });
+        ADVANCED
+          ? handleInput({ id: 'key-ce' })
+          : handleButton({ id: 'key-ce' });
+
+        $('#key-ce').classList.add('active');
       }
       break;
 
     case '+':
       {
-        handleButton({ id: 'key-add' });
+        ADVANCED
+          ? handleInput({ id: 'key-add' })
+          : handleButton({ id: 'key-add' });
+
+        $('#key-add').classList.add('active');
       }
       break;
 
     case '-':
       {
-        handleButton({ id: 'key-subtract' });
+        ADVANCED
+          ? handleInput({ id: 'key-subtract' })
+          : handleButton({ id: 'key-subtract' });
+
+        $('#key-subtract').classList.add('active');
       }
       break;
 
     case '/':
       {
-        handleButton({ id: 'key-divide' });
+        ADVANCED
+          ? handleInput({ id: 'key-divide' })
+          : handleButton({ id: 'key-divide' });
+
+        $('#key-divide').classList.add('active');
       }
       break;
 
     case '*':
       {
-        handleButton({ id: 'key-multiply' });
+        ADVANCED
+          ? handleInput({ id: 'key-multiply' })
+          : handleButton({ id: 'key-multiply' });
+
+        $('#key-multiply').classList.add('active');
       }
       break;
 
     case '.':
       {
-        handleButton({ id: 'key-dot' });
+        ADVANCED
+          ? handleInput({ id: 'key-dot' })
+          : handleButton({ id: 'key-dot' });
+
+        $('#key-dot').classList.add('active');
+      }
+      break;
+
+    case '(':
+      {
+        if (e.shiftKey) {
+          handleInput({ id: 'lb' });
+          $('#key-lb').classList.add('active');
+        }
+      }
+      break;
+
+    case ')':
+      {
+        if (e.shiftKey) {
+          handleInput({ id: 'rb' });
+          $('#key-rb').classList.add('active');
+        }
       }
       break;
 
     case '=':
     case 'Enter':
       {
-        handleButton({ id: 'key-eq' });
+        ADVANCED
+          ? handleInput({ id: 'key-eq' })
+          : handleButton({ id: 'key-eq' });
+
+        $('#key-eq').classList.add('active');
       }
       break;
     default:
       {
         if (parseFloat(e.key) || e.key === '0') {
-          handleButton({ id: `key-${e.key}` });
+          ADVANCED
+            ? handleInput({ id: `key-${e.key}` })
+            : handleButton({ id: `key-${e.key}` });
+
+          $(`#key-${e.key}`).classList.add('active');
         }
       }
       break;
   }
 });
+
+document.addEventListener('keyup', (e) => {
+  buttons.forEach((button) => button.classList.remove('active'));
+});
+
+function setAdvanced(bool) {
+  ADVANCED = bool;
+
+  $('#key-lb').disabled = !ADVANCED;
+  $('#key-rb').disabled = !ADVANCED;
+  $('#key-root').disabled = ADVANCED;
+  $('#key-fact').disabled = ADVANCED;
+  $('#key-pow').disabled = ADVANCED;
+}
 
 function Calculator() {
   // Operations
@@ -131,7 +218,12 @@ function clear() {
   setDisplay('0');
 }
 
+// For normal
 function handleButton(button) {
+  if (ADVANCED) {
+    handleInput(button);
+    return;
+  }
   let value = button.id.replaceAll('key-', '');
   const isAction = [
     'add',
@@ -147,7 +239,6 @@ function handleButton(button) {
   ].includes(value);
 
   if (isAction) {
-    console.log(value);
     switch (value) {
       case 'ce':
         {
@@ -246,5 +337,131 @@ function handleButton(button) {
       }
       setDisplay(rOperator);
     }
+  }
+}
+
+// For advanced
+function handleInput(button) {
+  const buttonId = button.id.replaceAll('key-', '');
+
+  switch (buttonId) {
+    case 'add':
+      {
+        setDisplay(display.textContent + ' + ');
+      }
+      break;
+
+    case 'subtract':
+      {
+        setDisplay(display.textContent + ' - ');
+      }
+      break;
+
+    case 'divide':
+      {
+        setDisplay(display.textContent + ' / ');
+      }
+      break;
+
+    case 'multiply':
+      {
+        setDisplay(display.textContent + ' * ');
+      }
+      break;
+
+    case 'mod':
+      {
+        setDisplay(display.textContent + ' % ');
+      }
+      break;
+
+    case 'ce':
+      {
+        clear();
+      }
+      break;
+
+    case 'pi':
+      {
+        if ([null, undefined, '', '0'].includes(display.textContent)) {
+          setDisplay(PI);
+        } else {
+          setDisplay(display.textContent + PI);
+        }
+      }
+      break;
+
+    case 'e':
+      {
+        if ([null, undefined, '', '0'].includes(display.textContent)) {
+          setDisplay(E);
+        } else {
+          setDisplay(display.textContent + E);
+        }
+      }
+      break;
+
+    case 'eq':
+      {
+        try {
+          const errorValues = [null, undefined, Infinity, NaN, Error];
+          let result = eval(display.textContent);
+
+          const isError = errorValues.includes(result);
+          if (isError) {
+            result = 'Error';
+          }
+
+          setDisplay(result, isError);
+        } catch (e) {
+          setDisplay('Error', true);
+        }
+      }
+      break;
+
+    case 'dot':
+      {
+        if (!display.textContent.includes('.')) {
+          setDisplay(display.textContent + '.');
+        }
+      }
+      break;
+
+    case 'lb':
+      {
+        if ([null, undefined, '', '0'].includes(display.textContent)) {
+          setDisplay('(');
+        } else {
+          setDisplay(display.textContent + '(');
+        }
+      }
+      break;
+
+    case 'rb':
+      {
+        if ([null, undefined, '', '0'].includes(display.textContent)) {
+          setDisplay(')');
+        } else {
+          setDisplay(display.textContent + ')');
+        }
+      }
+      break;
+
+    case 'pow':
+    case 'fact':
+    case 'root':
+      {
+      }
+      break;
+
+    default:
+      {
+        if ([null, undefined, '', '0'].includes(display.textContent)) {
+          setDisplay(buttonId);
+        } else {
+          setDisplay(display.textContent + buttonId);
+        }
+      }
+      break;
   }
 }
