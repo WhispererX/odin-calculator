@@ -53,9 +53,11 @@ document.addEventListener('keydown', (e) => {
       }
       break;
 
-      case '.': {
-          handleButton({ id: 'key-dot' });
-      } break;
+    case '.':
+      {
+        handleButton({ id: 'key-dot' });
+      }
+      break;
 
     case '=':
     case 'Enter':
@@ -81,6 +83,7 @@ function Calculator() {
   this.divide = (a, b) => a / b;
   this.mod = (a, b) => a % b;
   this.pow = (a) => Math.pow(a, 2);
+  this.root = (a) => Math.sqrt(a);
   this.fact = (a) => {
     let result = 1;
     for (var i = 2; i <= a; i++) result = result * i;
@@ -127,7 +130,7 @@ function clear() {
 
 function handleButton(button) {
   let value = button.id.replaceAll('key-', '');
-  const isAction = 'add,subtract,multiply,divide,mod,pow,fact,eq,ce'.includes(
+  const isAction = 'add,subtract,multiply,divide,mod,pow,fact,eq,ce,root'.includes(
     value
   );
 
@@ -150,15 +153,7 @@ function handleButton(button) {
 
       default:
         {
-          if (value === 'fact') {
-            if (lOperator !== null) {
-              lOperator = calculator.operate(lOperator, value);
-              justEvaluated = true;
-            }
-            return;
-          }
-
-          if (value === 'pow') {
+          if ('root,fact,pow'.includes(value)) {
             if (lOperator !== null) {
               lOperator = calculator.operate(lOperator, value);
               justEvaluated = true;
