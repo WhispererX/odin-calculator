@@ -12,6 +12,9 @@ let lOperator = null;
 let rOperator = null;
 let operator = null;
 
+const E = Math.floor(Math.E * 1000) / 1000;
+const PI = Math.floor(Math.PI * 1000) / 1000;
+
 let justEvaluated = false;
 
 let calculator = new Calculator();
@@ -130,11 +133,21 @@ function clear() {
 
 function handleButton(button) {
   let value = button.id.replaceAll('key-', '');
-  const isAction = 'add,subtract,multiply,divide,mod,pow,fact,eq,ce,root'.includes(
-    value
-  );
+  const isAction = [
+    'add',
+    'subtract',
+    'multiply',
+    'divide',
+    'mod',
+    'pow',
+    'fact',
+    'eq',
+    'ce',
+    'root',
+  ].includes(value);
 
   if (isAction) {
+    console.log(value);
     switch (value) {
       case 'ce':
         {
@@ -195,7 +208,17 @@ function handleButton(button) {
         }
       } else {
         if (value === 'pi') {
-          lOperator = Math.floor(Math.PI * 100) / 100;
+          if (lOperator) {
+            lOperator = calculator.operate(lOperator, 'multiply', PI);
+          } else {
+            lOperator = PI;
+          }
+        } else if (value === 'e') {
+          if (lOperator) {
+            lOperator = calculator.operate(lOperator, 'multiply', E);
+          } else {
+            lOperator = E;
+          }
         } else {
           lOperator += value;
         }
@@ -214,7 +237,9 @@ function handleButton(button) {
         }
       } else {
         if (value === 'pi') {
-          rOperator = Math.floor(Math.PI * 100) / 100;
+          rOperator = Math.floor(Math.PI * 1000) / 1000;
+        } else if (value === 'e') {
+          rOperator = Math.floor(Math.E * 1000) / 1000;
         } else {
           rOperator += value;
         }
