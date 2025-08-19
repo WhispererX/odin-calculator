@@ -1,202 +1,10 @@
-// Helper functions
+/**======================
+ *    HELPER FUNCTIONS
+ *========================**/
 const $ = (selector, context = document) => context.querySelector(selector);
 const $All = (selector, context = document) =>
   context.querySelectorAll(selector);
 
-// References
-const display = $('#display');
-const buttons = [...$All('button')];
-
-// Operation Variables
-let lOperator = null;
-let rOperator = null;
-let operator = null;
-
-const E = Math.floor(Math.E * 1000) / 1000;
-const PI = Math.floor(Math.PI * 1000) / 1000;
-
-let ADVANCED = false;
-
-let justEvaluated = false;
-
-let calculator = new Calculator();
-
-buttons.forEach((button) => {
-  if (button.id === 'setting-normal' || button.id === 'setting-advanced') {
-    button.addEventListener('click', (e) => {
-      $('#setting-normal').classList.remove('active');
-      $('#setting-advanced').classList.remove('active');
-
-      button.classList.add('active');
-
-      setAdvanced(button.id === 'setting-advanced');
-    });
-  } else {
-    button.addEventListener('click', (e) =>
-      ADVANCED ? handleInput(button) : handleButton(button)
-    );
-  }
-
-  if (ADVANCED) {
-    $('#key-lb').disabled = false;
-    $('#key-rb').disabled = false;
-    $('#key-root').disabled = true;
-    $('#key-fact').disabled = true;
-    $('#key-pow').disabled = true;
-  }
-});
-
-document.addEventListener('keydown', (e) => {
-  switch (e.key) {
-    case 'Delete':
-    case 'Backspace':
-      {
-        ADVANCED
-          ? handleInput({ id: 'key-ce' })
-          : handleButton({ id: 'key-ce' });
-
-        $('#key-ce').classList.add('active');
-      }
-      break;
-
-    case '+':
-      {
-        ADVANCED
-          ? handleInput({ id: 'key-add' })
-          : handleButton({ id: 'key-add' });
-
-        $('#key-add').classList.add('active');
-      }
-      break;
-
-    case '-':
-      {
-        ADVANCED
-          ? handleInput({ id: 'key-subtract' })
-          : handleButton({ id: 'key-subtract' });
-
-        $('#key-subtract').classList.add('active');
-      }
-      break;
-
-    case '/':
-      {
-        ADVANCED
-          ? handleInput({ id: 'key-divide' })
-          : handleButton({ id: 'key-divide' });
-
-        $('#key-divide').classList.add('active');
-      }
-      break;
-
-    case '*':
-      {
-        ADVANCED
-          ? handleInput({ id: 'key-multiply' })
-          : handleButton({ id: 'key-multiply' });
-
-        $('#key-multiply').classList.add('active');
-      }
-      break;
-
-    case '.':
-      {
-        ADVANCED
-          ? handleInput({ id: 'key-dot' })
-          : handleButton({ id: 'key-dot' });
-
-        $('#key-dot').classList.add('active');
-      }
-      break;
-
-    case '(':
-      {
-        if (e.shiftKey) {
-          handleInput({ id: 'lb' });
-          $('#key-lb').classList.add('active');
-        }
-      }
-      break;
-
-    case ')':
-      {
-        if (e.shiftKey) {
-          handleInput({ id: 'rb' });
-          $('#key-rb').classList.add('active');
-        }
-      }
-      break;
-
-    case '=':
-    case 'Enter':
-      {
-        ADVANCED
-          ? handleInput({ id: 'key-eq' })
-          : handleButton({ id: 'key-eq' });
-
-        $('#key-eq').classList.add('active');
-      }
-      break;
-    default:
-      {
-        if (parseFloat(e.key) || e.key === '0') {
-          ADVANCED
-            ? handleInput({ id: `key-${e.key}` })
-            : handleButton({ id: `key-${e.key}` });
-
-          $(`#key-${e.key}`).classList.add('active');
-        }
-      }
-      break;
-  }
-});
-
-document.addEventListener('keyup', (e) => {
-  buttons.forEach((button) => button.classList.remove('active'));
-});
-
-function setAdvanced(bool) {
-  ADVANCED = bool;
-
-  $('#key-lb').disabled = !ADVANCED;
-  $('#key-rb').disabled = !ADVANCED;
-  $('#key-root').disabled = ADVANCED;
-  $('#key-fact').disabled = ADVANCED;
-  $('#key-pow').disabled = ADVANCED;
-}
-
-function Calculator() {
-  // Operations
-  this.add = (a, b) => a + b;
-  this.subtract = (a, b) => a - b;
-  this.multiply = (a, b) => a * b;
-  this.divide = (a, b) => a / b;
-  this.mod = (a, b) => a % b;
-  this.pow = (a) => Math.pow(a, 2);
-  this.root = (a) => Math.sqrt(a);
-  this.fact = (a) => {
-    let result = 1;
-    for (var i = 2; i <= a; i++) result = result * i;
-    return result;
-  };
-
-  this.operate = (left, operator, right) => {
-    const errorValues = [null, undefined, Infinity, NaN];
-
-    const leftOperator = parseFloat(left);
-    const rightOperator = parseFloat(right);
-    let result = this[operator](leftOperator, rightOperator);
-    const isError = errorValues.includes(result);
-    if (isError) {
-      result = 'Error';
-    }
-
-    setDisplay(result, isError);
-    return result;
-  };
-}
-
-// Helper functions
 function setDisplay(value, isError = false) {
   if (typeof value === 'number') {
     value = Math.floor(value * 100) / 100;
@@ -210,7 +18,7 @@ function setDisplay(value, isError = false) {
   }
 }
 
-function clear() {
+function clearDisplay() {
   lOperator = null;
   rOperator = null;
   operator = null;
@@ -218,10 +26,82 @@ function clear() {
   setDisplay('0');
 }
 
-// For normal
-function handleButton(button) {
-  if (ADVANCED) {
-    handleInput(button);
+function setAdvancedMode(bool) {
+  advancedMode = bool;
+
+  $('#key-lb').disabled = !advancedMode;
+  $('#key-rb').disabled = !advancedMode;
+  $('#key-root').disabled = advancedMode;
+  $('#key-fact').disabled = advancedMode;
+  $('#key-pow').disabled = advancedMode;
+}
+
+/**======================
+ *    CALCULATOR CLASS
+ *========================**/
+class Calculator {
+  constructor() {
+    // Operations
+    this.add = (a, b) => a + b;
+    this.subtract = (a, b) => a - b;
+    this.multiply = (a, b) => a * b;
+    this.divide = (a, b) => a / b;
+    this.mod = (a, b) => a % b;
+    this.pow = (a) => Math.pow(a, 2);
+    this.root = (a) => Math.sqrt(a);
+    this.fact = (a) => {
+      let result = 1;
+      for (var i = 2; i <= a; i++) result = result * i;
+      return result;
+    };
+
+    this.operate = (left, operator, right) => {
+      const errorValues = [null, undefined, Infinity, NaN];
+
+      const leftOperator = parseFloat(left);
+      const rightOperator = parseFloat(right);
+      let result = this[operator](leftOperator, rightOperator);
+      const isError = errorValues.includes(result);
+      if (isError) {
+        result = 'Error';
+      }
+
+      setDisplay(result, isError);
+      return result;
+    };
+  }
+}
+
+/**============================================
+ *               CONSTANTS & VARIABLES
+ *=============================================**/
+const E = Math.floor(Math.E * 1000) / 1000;
+const PI = Math.floor(Math.PI * 1000) / 1000;
+
+let advancedMode = false; // Takes order of operations into consideration
+let justEvaluated = false; // Resets display on new input after evaluation in normal mode
+
+// Operation Variables
+let lOperator = null;
+let rOperator = null;
+let operator = null;
+
+let calculator = new Calculator();
+
+/**======================
+ *    DOM REFERENCES
+ *========================**/
+const display = $('#display');
+const buttons = [...$All('button')];
+
+/**======================
+ *    EVENT HANDLERS
+ *========================**/
+
+// For normal mode
+function handleButtonNormal(button) {
+  if (advancedMode) {
+    handleButtonAdvanced(button);
     return;
   }
   let value = button.id.replaceAll('key-', '');
@@ -242,7 +122,7 @@ function handleButton(button) {
     switch (value) {
       case 'ce':
         {
-          clear();
+          clearDisplay();
         }
         break;
 
@@ -286,7 +166,7 @@ function handleButton(button) {
   } else {
     if (justEvaluated) {
       justEvaluated = false;
-      clear();
+      clearDisplay();
     }
 
     if (rOperator === null && operator === null) {
@@ -340,8 +220,8 @@ function handleButton(button) {
   }
 }
 
-// For advanced
-function handleInput(button) {
+// For advanced mode
+function handleButtonAdvanced(button) {
   const buttonId = button.id.replaceAll('key-', '');
 
   switch (buttonId) {
@@ -377,13 +257,16 @@ function handleInput(button) {
 
     case 'ce':
       {
-        clear();
+        clearDisplay();
       }
       break;
 
     case 'pi':
       {
-        if ([null, undefined, '', '0'].includes(display.textContent)) {
+        if (
+          [null, undefined, '', '0'].includes(display.textContent) ||
+          display.classList.contains('error')
+        ) {
           setDisplay(PI);
         } else {
           setDisplay(display.textContent + PI);
@@ -393,7 +276,10 @@ function handleInput(button) {
 
     case 'e':
       {
-        if ([null, undefined, '', '0'].includes(display.textContent)) {
+        if (
+          [null, undefined, '', '0'].includes(display.textContent) ||
+          display.classList.contains('error')
+        ) {
           setDisplay(E);
         } else {
           setDisplay(display.textContent + E);
@@ -403,6 +289,10 @@ function handleInput(button) {
 
     case 'eq':
       {
+        if (/[a-zA-Z]/.test(display.textContent)) {
+          setDisplay("What'r you trying to do?", true);
+          return;
+        }
         try {
           const errorValues = [null, undefined, Infinity, NaN, Error];
           let result = eval(display.textContent);
@@ -421,7 +311,10 @@ function handleInput(button) {
 
     case 'dot':
       {
-        if (!display.textContent.includes('.')) {
+        if (
+          !display.textContent.includes('.') &&
+          !display.classList.contains('error')
+        ) {
           setDisplay(display.textContent + '.');
         }
       }
@@ -429,7 +322,10 @@ function handleInput(button) {
 
     case 'lb':
       {
-        if ([null, undefined, '', '0'].includes(display.textContent)) {
+        if (
+          [null, undefined, '', '0'].includes(display.textContent) ||
+          display.classList.contains('error')
+        ) {
           setDisplay('(');
         } else {
           setDisplay(display.textContent + '(');
@@ -439,7 +335,10 @@ function handleInput(button) {
 
     case 'rb':
       {
-        if ([null, undefined, '', '0'].includes(display.textContent)) {
+        if (
+          [null, undefined, '', '0'].includes(display.textContent) ||
+          display.classList.contains('error')
+        ) {
           setDisplay(')');
         } else {
           setDisplay(display.textContent + ')');
@@ -456,7 +355,10 @@ function handleInput(button) {
 
     default:
       {
-        if ([null, undefined, '', '0'].includes(display.textContent)) {
+        if (
+          [null, undefined, '', '0'].includes(display.textContent) ||
+          display.classList.contains('error')
+        ) {
           setDisplay(buttonId);
         } else {
           setDisplay(display.textContent + buttonId);
@@ -465,3 +367,143 @@ function handleInput(button) {
       break;
   }
 }
+
+/**======================
+ *    EVENT LISTENERS
+ *========================**/
+
+// Button click events
+buttons.forEach((button) => {
+  if (button.id === 'setting-normal' || button.id === 'setting-advanced') {
+    button.addEventListener('click', (e) => {
+      $('#setting-normal').classList.remove('active');
+      $('#setting-advanced').classList.remove('active');
+
+      button.classList.add('active');
+
+      setAdvancedMode(button.id === 'setting-advanced');
+    });
+  } else {
+    button.addEventListener('click', (e) =>
+      advancedMode ? handleButtonAdvanced(button) : handleButtonNormal(button)
+    );
+  }
+
+  if (advancedMode) {
+    $('#key-lb').disabled = false;
+    $('#key-rb').disabled = false;
+    $('#key-root').disabled = true;
+    $('#key-fact').disabled = true;
+    $('#key-pow').disabled = true;
+  }
+});
+
+// Keyboard events
+document.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'Delete':
+    case 'Backspace':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-ce' })
+          : handleButtonNormal({ id: 'key-ce' });
+
+        $('#key-ce').classList.add('active');
+      }
+      break;
+
+    case '+':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-add' })
+          : handleButtonNormal({ id: 'key-add' });
+
+        $('#key-add').classList.add('active');
+      }
+      break;
+
+    case '-':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-subtract' })
+          : handleButtonNormal({ id: 'key-subtract' });
+
+        $('#key-subtract').classList.add('active');
+      }
+      break;
+
+    case '/':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-divide' })
+          : handleButtonNormal({ id: 'key-divide' });
+
+        $('#key-divide').classList.add('active');
+      }
+      break;
+
+    case '*':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-multiply' })
+          : handleButtonNormal({ id: 'key-multiply' });
+
+        $('#key-multiply').classList.add('active');
+      }
+      break;
+
+    case '.':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-dot' })
+          : handleButtonNormal({ id: 'key-dot' });
+
+        $('#key-dot').classList.add('active');
+      }
+      break;
+
+    case '(':
+      {
+        if (e.shiftKey) {
+          handleButtonAdvanced({ id: 'lb' });
+          $('#key-lb').classList.add('active');
+        }
+      }
+      break;
+
+    case ')':
+      {
+        if (e.shiftKey) {
+          handleButtonAdvanced({ id: 'rb' });
+          $('#key-rb').classList.add('active');
+        }
+      }
+      break;
+
+    case '=':
+    case 'Enter':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-eq' })
+          : handleButtonNormal({ id: 'key-eq' });
+
+        $('#key-eq').classList.add('active');
+      }
+      break;
+    default:
+      {
+        if (parseFloat(e.key) || e.key === '0') {
+          advancedMode
+            ? handleButtonAdvanced({ id: `key-${e.key}` })
+            : handleButtonNormal({ id: `key-${e.key}` });
+
+          $(`#key-${e.key}`).classList.add('active');
+        }
+      }
+      break;
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  buttons.forEach((button) => button.classList.remove('active'));
+});
