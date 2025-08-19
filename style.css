@@ -47,11 +47,15 @@ body {
   background-repeat: no-repeat;
 
   min-height: 50px;
+  max-height: 50px;
+  text-overflow: clip;
+  text-wrap: nowrap;
 
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding: 0px 20px;
+  
   overflow: hidden;
 }
 
@@ -126,7 +130,8 @@ button.func {
   background-repeat: no-repeat;
 }
 
-button.func:active:not(:disabled), button.func.active {
+button.func:active:not(:disabled),
+button.func.active {
   background-image: url('./assets/calc-func-key-pressed.png');
   padding-top: var(--btn-text-offset);
 }
@@ -137,7 +142,8 @@ button.num {
   background-repeat: no-repeat;
 }
 
-button.num:active:not(:disabled), button.num.active {
+button.num:active:not(:disabled),
+button.num.active {
   background-image: url('./assets/calc-num-key-pressed.png');
   padding-top: var(--btn-text-offset);
 }
@@ -148,12 +154,13 @@ button.eq {
   background-repeat: no-repeat;
 }
 
-button.eq:active:not(:disabled), button.eq.active {
+button.eq:active:not(:disabled),
+button.eq.active {
   background-image: url('./assets/calc-eq-key-pressed.png');
   padding-top: var(--btn-text-offset);
 }
 
-
-button#setting-normal.active, button#setting-advanced.active {
+button#setting-normal.active,
+button#setting-advanced.active {
   flex: 1;
 }

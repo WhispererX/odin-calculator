@@ -10,6 +10,9 @@ function setDisplay(value, isError = false) {
     value = Math.floor(value * 100) / 100;
   }
   display.textContent = value;
+  if (display.textContent.length > MAX_DIGITS) {
+    display.textContent = display.textContent.slice(0, MAX_DIGITS);
+  }
 
   if (isError) {
     display.classList.add('error');
@@ -77,6 +80,7 @@ class Calculator {
  *=============================================**/
 const E = Math.floor(Math.E * 100) / 100;
 const PI = Math.floor(Math.PI * 100) / 100;
+const MAX_DIGITS = 32;
 
 let advancedMode = false; // Takes order of operations into consideration
 let justEvaluated = false; // Resets display on new input after evaluation in normal mode
@@ -227,7 +231,10 @@ function handleButtonAdvanced(button) {
   switch (buttonId) {
     case 'add':
       {
-        if (!display.classList.contains('error')) {
+        if (
+          ![null, undefined, '', '0'].includes(display.textContent) &&
+          !display.classList.contains('error')
+        ) {
           setDisplay(display.textContent + ' + ');
         }
       }
@@ -235,7 +242,9 @@ function handleButtonAdvanced(button) {
 
     case 'subtract':
       {
-        if (!display.classList.contains('error')) {
+        if ([null, undefined, '', '0'].includes(display.textContent)) {
+          setDisplay(' -');
+        } else if (!display.classList.contains('error')) {
           setDisplay(display.textContent + ' - ');
         }
       }
@@ -243,7 +252,10 @@ function handleButtonAdvanced(button) {
 
     case 'divide':
       {
-        if (!display.classList.contains('error')) {
+        if (
+          ![null, undefined, '', '0'].includes(display.textContent) &&
+          !display.classList.contains('error')
+        ) {
           setDisplay(display.textContent + ' / ');
         }
       }
@@ -251,7 +263,10 @@ function handleButtonAdvanced(button) {
 
     case 'multiply':
       {
-        if (!display.classList.contains('error')) {
+        if (
+          ![null, undefined, '', '0'].includes(display.textContent) &&
+          !display.classList.contains('error')
+        ) {
           setDisplay(display.textContent + ' * ');
         }
       }
@@ -259,12 +274,15 @@ function handleButtonAdvanced(button) {
 
     case 'mod':
       {
-        if (!display.classList.contains('error')) {
+        if (
+          ![null, undefined, '', '0'].includes(display.textContent) &&
+          !display.classList.contains('error')
+        ) {
           setDisplay(display.textContent + ' % ');
         }
       }
       break;
-  
+
     case 'ce':
       {
         clearDisplay();
@@ -462,6 +480,16 @@ document.addEventListener('keydown', (e) => {
       }
       break;
 
+    case '%':
+      {
+        advancedMode
+          ? handleButtonAdvanced({ id: 'key-mod' })
+          : handleButtonNormal({ id: 'key-mod' });
+
+        $('#key-mod').classList.add('active');
+      }
+      break;
+
     case '.':
       {
         advancedMode
@@ -515,5 +543,9 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keyup', (e) => {
-  buttons.forEach((button) => button.classList.remove('active'));
+  buttons.forEach((button) => {
+    if (!button.id.startsWith('setting')) {
+      button.classList.remove('active');
+    }
+  });
 });
